@@ -1,9 +1,10 @@
-From e5eebb3c9173446563ea888da330150cd9db4ed2 Mon Sep 17 00:00:00 2001
+From 5583dc49cc84875d46bc495bffa5251ace116a80 Mon Sep 17 00:00:00 2001
 From: Forgo7ten <Forgo7ten2020@gmail.com>
-Date: Fri, 22 Sep 2023 00:38:41 +0800
-Subject: [PATCH] ollvm-9.0.1
+Date: Tue, 28 Nov 2023 22:21:52 +0800
+Subject: [PATCH] init ollvm-9.0.1
 
 ---
+ .gitignore                                    |    2 +
  include/llvm/CryptoUtils.h                    |  264 ++++
  .../Transforms/Obfuscation/BogusControlFlow.h |   49 +
  .../llvm/Transforms/Obfuscation/Flattening.h  |   39 +
@@ -24,7 +25,8 @@ Subject: [PATCH] ollvm-9.0.1
  .../Obfuscation/SplitBasicBlocks.cpp          |  144 +++
  lib/Transforms/Obfuscation/Substitution.cpp   |  577 +++++++++
  lib/Transforms/Obfuscation/Utils.cpp          |  148 +++
- 20 files changed, 3396 insertions(+), 2 deletions(-)
+ utils/benchmark/src/benchmark_register.h      |    1 +
+ 22 files changed, 3399 insertions(+), 2 deletions(-)
  create mode 100644 include/llvm/CryptoUtils.h
  create mode 100644 include/llvm/Transforms/Obfuscation/BogusControlFlow.h
  create mode 100644 include/llvm/Transforms/Obfuscation/Flattening.h
@@ -42,9 +44,22 @@ Subject: [PATCH] ollvm-9.0.1
  create mode 100644 lib/Transforms/Obfuscation/Substitution.cpp
  create mode 100644 lib/Transforms/Obfuscation/Utils.cpp
 
+diff --git a/.gitignore b/.gitignore
+index 48dec78d..36ee5596 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -23,6 +23,8 @@
+ 
+ # Nested build directory
+ /build
++/cmake-build-debug
++/cmake-build-release
+ 
+ #==============================================================================#
+ # Explicit files to ignore (only matches one).
 diff --git a/include/llvm/CryptoUtils.h b/include/llvm/CryptoUtils.h
 new file mode 100644
-index 0000000..8b2426d
+index 00000000..8b2426d8
 --- /dev/null
 +++ b/include/llvm/CryptoUtils.h
 @@ -0,0 +1,264 @@
@@ -314,7 +329,7 @@ index 0000000..8b2426d
 +
 diff --git a/include/llvm/Transforms/Obfuscation/BogusControlFlow.h b/include/llvm/Transforms/Obfuscation/BogusControlFlow.h
 new file mode 100644
-index 0000000..5e2449b
+index 00000000..5e2449be
 --- /dev/null
 +++ b/include/llvm/Transforms/Obfuscation/BogusControlFlow.h
 @@ -0,0 +1,49 @@
@@ -369,7 +384,7 @@ index 0000000..5e2449b
 +
 diff --git a/include/llvm/Transforms/Obfuscation/Flattening.h b/include/llvm/Transforms/Obfuscation/Flattening.h
 new file mode 100644
-index 0000000..7122d39
+index 00000000..7122d39b
 --- /dev/null
 +++ b/include/llvm/Transforms/Obfuscation/Flattening.h
 @@ -0,0 +1,39 @@
@@ -414,7 +429,7 @@ index 0000000..7122d39
 +
 diff --git a/include/llvm/Transforms/Obfuscation/Split.h b/include/llvm/Transforms/Obfuscation/Split.h
 new file mode 100644
-index 0000000..e77305f
+index 00000000..e77305f7
 --- /dev/null
 +++ b/include/llvm/Transforms/Obfuscation/Split.h
 @@ -0,0 +1,35 @@
@@ -455,7 +470,7 @@ index 0000000..e77305f
 +
 diff --git a/include/llvm/Transforms/Obfuscation/Substitution.h b/include/llvm/Transforms/Obfuscation/Substitution.h
 new file mode 100644
-index 0000000..7c3048f
+index 00000000..7c3048f8
 --- /dev/null
 +++ b/include/llvm/Transforms/Obfuscation/Substitution.h
 @@ -0,0 +1,38 @@
@@ -499,7 +514,7 @@ index 0000000..7c3048f
 +
 diff --git a/include/llvm/Transforms/Obfuscation/Utils.h b/include/llvm/Transforms/Obfuscation/Utils.h
 new file mode 100644
-index 0000000..c25533e
+index 00000000..c25533e9
 --- /dev/null
 +++ b/include/llvm/Transforms/Obfuscation/Utils.h
 @@ -0,0 +1,15 @@
@@ -519,7 +534,7 @@ index 0000000..c25533e
 +
 +#endif
 diff --git a/lib/Transforms/CMakeLists.txt b/lib/Transforms/CMakeLists.txt
-index 74db9e5..6c6711f 100644
+index 74db9e53..6c6711ff 100644
 --- a/lib/Transforms/CMakeLists.txt
 +++ b/lib/Transforms/CMakeLists.txt
 @@ -8,3 +8,5 @@ add_subdirectory(Vectorize)
@@ -530,7 +545,7 @@ index 74db9e5..6c6711f 100644
 +add_subdirectory(Obfuscation)
 \ No newline at end of file
 diff --git a/lib/Transforms/IPO/LLVMBuild.txt b/lib/Transforms/IPO/LLVMBuild.txt
-index 14aa4e4..0245d2a 100644
+index 14aa4e4b..0245d2a2 100644
 --- a/lib/Transforms/IPO/LLVMBuild.txt
 +++ b/lib/Transforms/IPO/LLVMBuild.txt
 @@ -19,4 +19,4 @@ type = Library
@@ -540,7 +555,7 @@ index 14aa4e4..0245d2a 100644
 -required_libraries = AggressiveInstCombine Analysis BitReader BitWriter Core InstCombine IRReader Linker Object ProfileData Scalar Support TransformUtils Vectorize Instrumentation
 +required_libraries = AggressiveInstCombine Analysis BitReader BitWriter Core InstCombine IRReader Linker Object ProfileData Scalar Support TransformUtils Vectorize Instrumentation Obfuscation
 diff --git a/lib/Transforms/IPO/PassManagerBuilder.cpp b/lib/Transforms/IPO/PassManagerBuilder.cpp
-index 3ea77f0..ecebd6e 100644
+index 3ea77f08..ecebd6ef 100644
 --- a/lib/Transforms/IPO/PassManagerBuilder.cpp
 +++ b/lib/Transforms/IPO/PassManagerBuilder.cpp
 @@ -47,6 +47,12 @@
@@ -620,7 +635,7 @@ index 3ea77f0..ecebd6e 100644
    }
  
 diff --git a/lib/Transforms/LLVMBuild.txt b/lib/Transforms/LLVMBuild.txt
-index 75c614f..7678d96 100644
+index 75c614fd..7678d96f 100644
 --- a/lib/Transforms/LLVMBuild.txt
 +++ b/lib/Transforms/LLVMBuild.txt
 @@ -15,7 +15,7 @@
@@ -634,7 +649,7 @@ index 75c614f..7678d96 100644
  type = Group
 diff --git a/lib/Transforms/Obfuscation/BogusControlFlow.cpp b/lib/Transforms/Obfuscation/BogusControlFlow.cpp
 new file mode 100644
-index 0000000..6cfee84
+index 00000000..6cfee847
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/BogusControlFlow.cpp
 @@ -0,0 +1,620 @@
@@ -1260,7 +1275,7 @@ index 0000000..6cfee84
 +}
 diff --git a/lib/Transforms/Obfuscation/CMakeLists.txt b/lib/Transforms/Obfuscation/CMakeLists.txt
 new file mode 100644
-index 0000000..2336b30
+index 00000000..2336b301
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/CMakeLists.txt
 @@ -0,0 +1,10 @@
@@ -1276,7 +1291,7 @@ index 0000000..2336b30
 +add_dependencies(LLVMObfuscation intrinsics_gen)
 diff --git a/lib/Transforms/Obfuscation/CryptoUtils.cpp b/lib/Transforms/Obfuscation/CryptoUtils.cpp
 new file mode 100644
-index 0000000..089321b
+index 00000000..089321b2
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/CryptoUtils.cpp
 @@ -0,0 +1,1087 @@
@@ -2369,7 +2384,7 @@ index 0000000..089321b
 +}
 diff --git a/lib/Transforms/Obfuscation/Flattening.cpp b/lib/Transforms/Obfuscation/Flattening.cpp
 new file mode 100644
-index 0000000..03bee1d
+index 00000000..03bee1d6
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/Flattening.cpp
 @@ -0,0 +1,242 @@
@@ -2617,7 +2632,7 @@ index 0000000..03bee1d
 +}
 diff --git a/lib/Transforms/Obfuscation/LICENSE-OBFUSCATOR.TXT b/lib/Transforms/Obfuscation/LICENSE-OBFUSCATOR.TXT
 new file mode 100644
-index 0000000..ea86a85
+index 00000000..ea86a85b
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/LICENSE-OBFUSCATOR.TXT
 @@ -0,0 +1,44 @@
@@ -2667,7 +2682,7 @@ index 0000000..ea86a85
 +SOFTWARE.
 diff --git a/lib/Transforms/Obfuscation/LLVMBuild.txt b/lib/Transforms/Obfuscation/LLVMBuild.txt
 new file mode 100644
-index 0000000..2be9587
+index 00000000..2be95875
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/LLVMBuild.txt
 @@ -0,0 +1,23 @@
@@ -2696,7 +2711,7 @@ index 0000000..2be9587
 +
 diff --git a/lib/Transforms/Obfuscation/Makefile b/lib/Transforms/Obfuscation/Makefile
 new file mode 100644
-index 0000000..7fa1ec0
+index 00000000..7fa1ec0d
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/Makefile
 @@ -0,0 +1,16 @@
@@ -2718,7 +2733,7 @@ index 0000000..7fa1ec0
 +
 diff --git a/lib/Transforms/Obfuscation/SplitBasicBlocks.cpp b/lib/Transforms/Obfuscation/SplitBasicBlocks.cpp
 new file mode 100644
-index 0000000..7a462e1
+index 00000000..7a462e12
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/SplitBasicBlocks.cpp
 @@ -0,0 +1,144 @@
@@ -2868,7 +2883,7 @@ index 0000000..7a462e1
 +
 diff --git a/lib/Transforms/Obfuscation/Substitution.cpp b/lib/Transforms/Obfuscation/Substitution.cpp
 new file mode 100644
-index 0000000..01149a3
+index 00000000..01149a39
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/Substitution.cpp
 @@ -0,0 +1,577 @@
@@ -3451,7 +3466,7 @@ index 0000000..01149a3
 +
 diff --git a/lib/Transforms/Obfuscation/Utils.cpp b/lib/Transforms/Obfuscation/Utils.cpp
 new file mode 100644
-index 0000000..3801e34
+index 00000000..3801e349
 --- /dev/null
 +++ b/lib/Transforms/Obfuscation/Utils.cpp
 @@ -0,0 +1,148 @@
@@ -3603,6 +3618,18 @@ index 0000000..3801e34
 +  return false;
 +}
 +
+diff --git a/utils/benchmark/src/benchmark_register.h b/utils/benchmark/src/benchmark_register.h
+index 0705e219..4caa5ad4 100644
+--- a/utils/benchmark/src/benchmark_register.h
++++ b/utils/benchmark/src/benchmark_register.h
+@@ -1,6 +1,7 @@
+ #ifndef BENCHMARK_REGISTER_H
+ #define BENCHMARK_REGISTER_H
+ 
++#include <limits>
+ #include <vector>
+ 
+ #include "check.h"
 -- 
-2.39.2
+2.34.1
 
